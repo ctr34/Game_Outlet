@@ -1,4 +1,6 @@
-package src.main;
+package main;
+
+import entity.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,18 +10,17 @@ public class GamePanel extends JPanel implements Runnable{
     final int initTile = 16; // 16 x 16 tile
     final int scale = 3;
 
-    final int tileSize = initTile * scale; // 48 x 48 tile
+    public final int tileSize = initTile * scale; // 48 x 48 tile
     final int maxRow = tileSize * 16; // 768 tile
     final int maxColumn = tileSize * 9; // 432 tile
 
-    Thread player;
+    Thread game;
 
     KeyHandler keyHandler = new KeyHandler();
 
-    int playerX = 80, playerY = 80;
-    int strike = 4;
-
     int fps = 60;
+
+    Player player;
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(maxRow, maxColumn));
@@ -27,35 +28,24 @@ public class GamePanel extends JPanel implements Runnable{
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true); //With this, the GamePanel can "focus" to receive the key pressing
+
+        player = new Player(this, keyHandler);
     }
 
     public void startGame(){
-        player = new Thread(this);
-        player.start();
+        game = new Thread(this);
+        game.start();
     }
 
     public void update(){
         //obtain the new coordinates
-        if (keyHandler.up == true) {
-            playerY -= strike;
-        }
-        if (keyHandler.down == true) {
-            playerY += strike;
-        }
-        if (keyHandler.left == true) {
-            playerX -= strike;
-        }
-        if (keyHandler.right == true) {
-            playerX += strike;
-        }
+        player.update();
     }
 
     @Override
     public void run() {
         //Set interval
         long interval = 1000000000 / fps;
-
-
 
         while (player != null) {
             long next = System.nanoTime() + interval;
@@ -81,8 +71,7 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics graphics){
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
-        graphics2D.setColor(Color.white);
-        graphics2D.fillRect(playerX, playerY, tileSize, tileSize);
+        player.draw(graphics2D);
         graphics2D.dispose();
     }
 }
