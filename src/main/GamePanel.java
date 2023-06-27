@@ -24,7 +24,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(maxRow, maxColumn));
-        this.setBackground(Color.BLACK);
+        this.setBackground(Color.GRAY);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyHandler);
         this.setFocusable(true); //With this, the GamePanel can "focus" to receive the key pressing
